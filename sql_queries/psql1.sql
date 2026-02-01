@@ -17,11 +17,8 @@ GROUP BY payment_method;
 -- Project Question #2
 -- Identify the highest-rated category in each branch, displaying the branch, category
 -- AVG RATING
-SELECT 
-    branch,
-    category,
-    avg_rating
-FROM (
+
+WITH highest_rated_cat AS (
     SELECT
         branch,
         category,
@@ -33,16 +30,18 @@ FROM (
     FROM walmart
     WHERE rating IS NOT NULL
     GROUP BY branch, category
-) t
+	)
+SELECT
+    branch,
+    category,
+    avg_rating
+FROM highest_rated_cat
 WHERE rn = 1;
 
 
 -- Q.3 Identify the busiest day for each branch based on the number of transactions
-SELECT
-    branch,
-    date,
-    no_transactions
-FROM (
+
+WITH busiest_day AS (
 	SELECT
 		branch,
 		date,
@@ -50,9 +49,15 @@ FROM (
 		RANK() OVER(PARTITION BY branch ORDER BY COUNT(*) DESC) as rnk
 	FROM walmart
 	GROUP BY branch, date	
-) t
+)
+SELECT
+    branch,
+    date,
+    no_transactions
+FROM busiest_day
 WHERE rnk = 1
-ORDER BY branch
+ORDER BY branch;
+
 -- Q. 4 
 -- Calculate the total quantity of items sold per payment method. List payment_method and total_quantity.
 
@@ -81,24 +86,62 @@ ORDER BY avg_rating DESC, min_rating ASC, max_rating DESC;
 -- (unit_price * quantity * profit_margin). 
 -- List category and total_profit, ordered from highest to lowest profit.
 
-
-
+SELECT
+	category,
+	ROUND(SUM(unit_price * quantity * profit_margin)::numeric, 2) AS total_profit
+FROM walmart
+GROUP BY category
+ORDER BY total_profit DESC;
 
 
 -- Q.7
 -- Determine the most common payment method for each Branch. 
 -- Display Branch and the preferred_payment_method.
 
-
-
-
+WITH ranked_payment AS (
+    SELECT
+        branch,
+        payment_method,
+        COUNT(*) AS cnt,
+        ROW_NUMBER() OVER (
+            PARTITION BY branch
+            ORDER BY COUNT(*) DESC
+        ) AS rn
+    FROM walmart
+    GROUP BY branch, payment_method
+	)
+SELECT
+	branch,
+	payment_method,
+	cnt,
+	rn
+FROM ranked_payment
+WHERE rn = 1
+ORDER BY branch;
 
 -- Q.8
 -- Categorize sales into 3 group MORNING, AFTERNOON, EVENING 
 -- Find out each of the shift and number of invoices
 
+SELECT
+	*,
+	CASE
+		WHEN time::time BETWEEN '00:00:00' AND '11:59:59' THEN 'MORNING'
+		WHEN time::time BETWEEN '12:00:00' AND '16:59:59' THEN 'AFTERNOON'
+		ELSE 'EVENING'
+	END AS time_of_day
+FROM walmart;
 
-
+SELECT
+	CASE
+		WHEN time::time BETWEEN '00:00:00' AND '11:59:59' THEN 'MORNING'
+		WHEN time::time BETWEEN '12:00:00' AND '16:59:59' THEN 'AFTERNOON'
+		ELSE 'EVENING'
+	END AS time_of_day,
+	COUNT(*) as total_sales
+FROM walmart
+GROUP BY time_of_day
+ORDER BY total_sales DESC;
 
 
 -- 
@@ -111,3 +154,40 @@ ORDER BY avg_rating DESC, min_rating ASC, max_rating DESC;
 
 
 -- 2022 sales
+
+WITH revenue_2022 AS (
+    SELECT 
+        branch,
+        SUM(total) AS revenue
+    FROM walmart
+    WHERE EXTRACT(YEAR FROM date::date) = 2022
+    GROUP BY branch
+),
+revenue_2023 AS (
+    SELECT 
+        branch,
+        SUM(total) AS revenue
+    FROM walmart
+    WHERE EXTRACT(YEAR FROM date::date) = 2023
+    GROUP BY branch
+)
+SELECT 
+    ls.branch,
+    ls.revenue AS last_year_revenue,
+    cs.revenue AS cr_year_revenue,
+    ROUND(
+        (ls.revenue - cs.revenue)::numeric
+        / ls.revenue::numeric * 100,
+        2
+    ) AS rev_dec_ratio
+FROM revenue_2022 ls
+JOIN revenue_2023 cs
+    ON ls.branch = cs.branch
+WHERE ls.revenue > cs.revenue
+ORDER BY rev_dec_ratio DESC
+LIMIT 5;
+
+
+
+
+
