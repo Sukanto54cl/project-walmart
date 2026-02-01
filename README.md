@@ -1,7 +1,7 @@
 ## Walmart Sales Analysis
 
 **Tools:** Python (Pandas), PostgreSQL, SQL  
-**Dataset:** Kaggle – Walmart Sales Data  
+**Dataset:** [Kaggle – Walmart Sales Data](https://www.kaggle.com/datasets/najir0123/walmart-10k-sales-datasets)
 
 **Objective:**  
 Analyze sales performance, revenue trends, profitability, and customer behavior across Walmart branches to extract actionable business insights.
