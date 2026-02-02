@@ -1,5 +1,7 @@
 ## Walmart Sales Analysis
 
+Data was downloaded using the Kaggle API, requiring API token authentication and command-line setup.  
+
 **Tools:** Python (Pandas), PostgreSQL, SQL  
 **Dataset:** [Kaggle – Walmart Sales Data](https://www.kaggle.com/datasets/najir0123/walmart-10k-sales-datasets)
 
@@ -25,3 +27,17 @@ Analyze sales performance, revenue trends, profitability, and customer behavior 
 ## Acknowledgements
 This project was inspired by and partially adapted from an MIT-licensed repository:  
 https://github.com/najirh/Walmart_SQL_Python.git
+
+---
+## Project Structure
+
+```text
+project-walmart/
+├── sql_queries/
+│   ├── psql1.sql
+├── notebooks/
+│   └── data_clean.ipynb
+├── data/
+│   └── walmart_sales.csv
+└── README.md
+
