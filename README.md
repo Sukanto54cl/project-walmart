@@ -1,6 +1,7 @@
 ## Walmart Sales Analysis
 
 ![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Postgres](https://img.shields.io/badge/DB-PostgreSQL-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
