@@ -1,5 +1,9 @@
 ## Walmart Sales Analysis
 
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Status](https://img.shields.io/badge/status-active-success)
+![License](https://img.shields.io/badge/license-MIT-green)
+
 Data was downloaded using the Kaggle API, requiring API token authentication and command-line setup.  
 
 **Tools:** Python (Pandas), PostgreSQL, SQL  
